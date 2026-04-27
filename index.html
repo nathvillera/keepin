@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Aplikasi Simpan Arsip</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <!-- ================= LOGIN PAGE ================= -->
+    <section id="loginPage" class="page login-page">
+      <div class="login-card">
+        <div class="brand-badge">KP</div>
+
+        <h1>KEEPIN</h1>
+        <p class="muted">
+          Simpan dokumen dan gambar langsung di browser tanpa database.
+        </p>
+
+        <form id="loginForm" class="form-stack">
+          <div class="form-group">
+            <label for="usernameInput">Username</label>
+            <input
+              type="text"
+              id="usernameInput"
+              placeholder="Contoh: admin"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="passwordInput">Password</label>
+            <input
+              type="password"
+              id="passwordInput"
+              placeholder="Minimal 4 karakter"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="primary-button">Masuk</button>
+          <button type="button" id="registerButton" class="secondary-button">
+            Buat akun dari data ini
+          </button>
+
+          <p id="loginMessage" class="message"></p>
+        </form>
+
+        <div class="small-note">
+          Data akun dan arsip tersimpan di browser ini saja.
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= APP PAGE ================= -->
+    <section id="appPage" class="page app-page hidden">
+      <header class="top-bar">
+        <div>
+          <p class="eyebrow">My Archive</p>
+          <h1>Daftar Arsip</h1>
+        </div>
+
+        <button id="logoutButton" class="ghost-button">Logout</button>
+      </header>
+
+      <section class="toolbar">
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari judul, catatan, atau tag..."
+          />
+        </div>
+
+        <select id="filterType">
+          <option value="all">Semua Tipe</option>
+          <option value="document">Document</option>
+          <option value="image">Image</option>
+          <option value="both">Doc + Image</option>
+        </select>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>Total Arsip</span>
+          <strong id="totalArchives">0</strong>
+        </article>
+
+        <article class="summary-card">
+          <span>Document</span>
+          <strong id="totalDocuments">0</strong>
+        </article>
+
+        <article class="summary-card">
+          <span>Image</span>
+          <strong id="totalImages">0</strong>
+        </article>
+      </section>
+
+      <section id="archiveList" class="archive-list"></section>
+
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon">📁</div>
+        <h2>Belum ada arsip</h2>
+        <p>Klik tombol + untuk membuat arsip pertama kamu.</p>
+      </div>
+
+      <button id="openArchiveFormButton" class="floating-button" title="Tambah Arsip">
+        +
+      </button>
+    </section>
+
+    <!-- ================= ARCHIVE FORM MODAL ================= -->
+    <section id="archiveModal" class="modal-backdrop hidden">
+      <div class="phone-modal">
+        <header class="modal-header">
+          <button id="cancelArchiveButton" class="text-button">Cancel</button>
+          <h2>New Archive</h2>
+          <button id="saveArchiveButton" class="text-button accent">Save</button>
+        </header>
+
+        <form id="archiveForm" class="archive-form">
+          <div class="section-label">TYPE</div>
+
+          <div class="type-grid">
+            <label class="type-card selected" data-type-card="document">
+              <input type="radio" name="archiveType" value="document" checked />
+              <span class="type-icon document-icon">▣</span>
+              <span>Document</span>
+            </label>
+
+            <label class="type-card" data-type-card="image">
+              <input type="radio" name="archiveType" value="image" />
+              <span class="type-icon image-icon">▣</span>
+              <span>Image</span>
+            </label>
+
+            <label class="type-card" data-type-card="both">
+              <input type="radio" name="archiveType" value="both" />
+              <span class="type-icon link-icon">∞</span>
+              <span>Doc + Image</span>
+            </label>
+
+            <label class="type-card muted-card">
+              <input type="radio" disabled />
+              <span class="type-icon note-icon">✎</span>
+              <span>Note</span>
+            </label>
+
+            <label class="type-card muted-card">
+              <input type="radio" disabled />
+              <span class="type-icon folder-icon">■</span>
+              <span>Folder</span>
+            </label>
+
+            <label class="type-card muted-card">
+              <input type="radio" disabled />
+              <span class="type-icon other-icon">◼</span>
+              <span>Other</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="archiveTitle" class="section-label">TITLE</label>
+            <input
+              type="text"
+              id="archiveTitle"
+              placeholder="Contoh: Brand Guidelines 2024"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="archiveNotes" class="section-label">NOTES</label>
+            <textarea
+              id="archiveNotes"
+              rows="4"
+              placeholder="Add a description..."
+            ></textarea>
+          </div>
+
+          <div id="documentUploadGroup" class="form-group">
+            <label for="documentFile" class="section-label">DOCUMENT</label>
+            <input
+              type="file"
+              id="documentFile"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+            />
+            <small>Format contoh: PDF, DOCX, XLSX, PPTX, TXT.</small>
+          </div>
+
+          <div id="imageUploadGroup" class="form-group hidden">
+            <label for="imageFile" class="section-label">IMAGE</label>
+            <input
+              type="file"
+              id="imageFile"
+              accept="image/*"
+            />
+            <small>Format gambar: JPG, PNG, WEBP, dan sejenisnya.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="archiveTags" class="section-label">TAGS</label>
+            <input
+              type="text"
+              id="archiveTags"
+              placeholder="Contoh: Design, Brand, Penting"
+            />
+            <small>Pisahkan tag dengan koma.</small>
+          </div>
+
+          <p id="archiveMessage" class="message"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= CONFIRM DELETE MODAL ================= -->
+    <section id="deleteModal" class="modal-backdrop hidden">
+      <div class="confirm-modal">
+        <h2>Hapus arsip?</h2>
+        <p>Arsip yang sudah dihapus tidak bisa dikembalikan.</p>
+
+        <div class="confirm-actions">
+          <button id="cancelDeleteButton" class="secondary-button">Batal</button>
+          <button id="confirmDeleteButton" class="danger-button">Hapus</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
